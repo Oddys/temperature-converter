@@ -23,8 +23,9 @@ class Converter:
         self.temp2 = tkinter.StringVar()
         tkinter.Label(self.frame, textvar=self.temp2).pack()
 
-        tkinter.Button(self.frame, text='Convert', command=self.convert).pack()
-        tkinter.Button(self.frame, text='Quit',
+        tkinter.Button(self.frame, text='Convert', width=10,
+                       command=self.convert).pack()
+        tkinter.Button(self.frame, text='Quit', width=10,
                        command=self.quit).pack()
 
     def converter(self):
@@ -54,7 +55,7 @@ class CelsiusToFahrenheit(Converter):
         self.header2.set(self.header2.get() + 'Fahrenheit:')
 
     def converter(self):
-        self.temp2.set(float(self.temp1.get()) * 9 / 5 + 32)
+        self.temp2.set(float(self.temp1.get()) * 9/5 + 32)
 
 
 class CelsiusToKelvin(Converter):
@@ -76,7 +77,7 @@ class FahrenheitToCelsius(Converter):
         self.header2.set(self.header2.get() + 'Celsius:')
 
     def converter(self):
-        self.temp2.set((float(self.temp1.get()) - 32) * 5 / 9)
+        self.temp2.set((float(self.temp1.get()) - 32) * 5/9)
 
 
 class FahrenheitToKelvin(Converter):
@@ -87,7 +88,7 @@ class FahrenheitToKelvin(Converter):
         self.header2.set(self.header2.get() + 'Kelvin:')
 
     def converter(self):
-        self.temp2.set((float(self.temp1.get()) + 459.67) * 5 / 9)
+        self.temp2.set((float(self.temp1.get()) + 459.67) * 5/9)
 
 
 class KelvinToCelsius(Converter):
@@ -108,7 +109,7 @@ class KelvinToFahrenheit(Converter):
         self.header2.set(self.header2.get() + 'Fahrenheit:')
 
     def converter(self):
-        self.temp2.set(float(self.temp1.get()) * 9 / 5 - 459.67)
+        self.temp2.set(float(self.temp1.get()) * 9/5 - 459.67)
 
 
 class AppFrame:
