@@ -8,14 +8,17 @@ class Converter:
         self.frame = tkinter.Frame(self.master, borderwidth=10)
         self.frame.pack()
 
-        self.header = tkinter.StringVar()
-        self.header.set('Temperature in ')
-        tkinter.Label(self.frame, textvar=self.header).pack()
+        self.header1 = tkinter.StringVar()
+        self.header1.set('Temperature in ')
+        tkinter.Label(self.frame, textvar=self.header1).pack()
+        self.header2 = tkinter.StringVar()
+        self.header2.set('Temperature in ')
 
         # Input
         self.temp1 = tkinter.StringVar()
         tkinter.Entry(self.frame, width=30, textvar=self.temp1).pack()
 
+        tkinter.Label(self.frame, textvar=self.header2).pack()
         # Output
         self.temp2 = tkinter.StringVar()
         tkinter.Label(self.frame, textvar=self.temp2).pack()
@@ -43,25 +46,69 @@ class Converter:
             widget.destroy()
         self.master.pack_forget()
 
+class CelsiusToFahrenheit(Converter):
+    """A Converter from Celsius to Fahrenheit."""
+    def __init__(self,  master):
+        super().__init__(master)
+        self.header1.set(self.header1.get() + 'Celsius:')
+        self.header2.set(self.header2.get() + 'Fahrenheit:')
+
+    def converter(self):
+        self.temp2.set(float(self.temp1.get()) * 9 / 5 + 32)
+
+
+class CelsiusToKelvin(Converter):
+    """A converter from Celsius to Kelvin."""
+    def __init__(self, master):
+        super().__init__(master)
+        self.header1.set(self.header1.get() + 'Celsius:')
+        self.header2.set(self.header2.get() + 'Kelvin:')
+
+    def converter(self):
+        self.temp2.set(float(self.temp1.get()) + 273.15)
+
 
 class FahrenheitToCelsius(Converter):
     """A Converter from Fahrenheit to Celsius."""
     def __init__(self, master):
         super().__init__(master)
-        self.header.set(self.header.get() + 'Fahrenheit')
+        self.header1.set(self.header1.get() + 'Fahrenheit:')
+        self.header2.set(self.header2.get() + 'Celsius:')
 
     def converter(self):
         self.temp2.set((float(self.temp1.get()) - 32) * 5 / 9)
 
 
-class CelsiusToFahrenheit(Converter):
-    """A Converter from Celsius to Fahrenheit."""
-    def __init__(self,  master):
+class FahrenheitToKelvin(Converter):
+    """A Converter from Fahrenheit to Kelvin."""
+    def __init__(self, master):
         super().__init__(master)
-        self.header.set(self.header.get() + 'Celsius')
+        self.header1.set(self.header1.get() + 'Fahrenheit:')
+        self.header2.set(self.header2.get() + 'Kelvin:')
 
     def converter(self):
-        self.temp2.set(float(self.temp1.get()) * 9 / 5 + 32)
+        self.temp2.set((float(self.temp1.get()) + 459.67) * 5 / 9)
+
+
+class KelvinToCelsius(Converter):
+    """A converter from Kelvin to Celsius."""
+    def __init__(self, master):
+        super().__init__(master)
+        self.header1.set(self.header1.get() + 'Kelvin:')
+        self.header2.set(self.header2.get() + 'Celsius:')
+
+    def converter(self):
+        self.temp2.set(float(self.temp1.get()) - 273.15)
+
+class KelvinToFahrenheit(Converter):
+    """A converter from Kelvin to Fahrenheit."""
+    def __init__(self, master):
+        super().__init__(master)
+        self.header1.set(self.header1.get() + 'Kelvin:')
+        self.header2.set(self.header2.get() + 'Fahrenheit:')
+
+    def converter(self):
+        self.temp2.set(float(self.temp1.get()) * 9 / 5 - 459.67)
 
 
 class AppFrame:
@@ -73,13 +120,20 @@ class AppFrame:
         self.frame2 = tkinter.Frame(self.master)
 
         self.converters = {
-            'Fahrenheit To Celsius': FahrenheitToCelsius,
             'Celsius To Fahrenheit': CelsiusToFahrenheit,
+            'Celsius To Kelvin': CelsiusToKelvin,
+            'Fahrenheit To Celsius': FahrenheitToCelsius,
+            'Fahrenheit To Kelvin': FahrenheitToKelvin,
+            'Kelvin To Celsius': KelvinToCelsius,
+            'Kelvin To Fahrenheit': KelvinToFahrenheit,
         }
-        for name in self.converters:
+        # Arrange buttons in alphabetical order
+        sorted_names = sorted(self.converters.keys())
+        for i in range(len(sorted_names)):
             tkinter.Button(
-                self.frame1, text=name,
-                command=lambda c=self.converters[name]: self.run(c)).pack()
+                self.frame1, text=sorted_names[i], width=20,
+                command=lambda c=self.converters[sorted_names[i]]:
+                    self.run(c)).grid(row=i//2, column=i%2)
 
     def run(self, converter):
         # If user has switched converters without closing the frame, clear it
