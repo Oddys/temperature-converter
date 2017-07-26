@@ -93,8 +93,8 @@ class AppFrame:
         # If no converter has been run yet or the user quit a previous converter
         if not self.frame2.winfo_ismapped():
             self.frame2.pack()
+        # If the user switched converters without quitting
         else:
-            # If the user switched converters without quitting
             for widget in self.frame2.winfo_children():
                 widget.destroy()
         ConverterGUI(self.frame2, converter)
