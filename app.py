@@ -2,23 +2,42 @@ import tkinter
 
 
 class Converter:
-    """A temperature converter GUI."""
-    def __init__(self, master):
+    def __init__(self, from_, into, formula):
+        """
+        (Converter, str, str, function) -> NoneType
+        Create converter from scale from_ into scale into using formula formula.
+        """
+        self.from_ = from_
+        self.into = into
+        self.formula = formula
+
+    def convert(self, temperature):
+        """
+        (Converter, float) -> float
+        Convert temperature degrees.
+        """
+        return self.formula(temperature)
+
+
+class ConverterGUI:
+    """GUI for Converter."""
+    def __init__(self, master, converter):
         self.master = master
-        self.frame = tkinter.Frame(self.master, borderwidth=10)
+        self.converter = converter
+
+        self.frame = tkinter.Frame(master, borderwidth=10)
         self.frame.pack()
 
-        self.header1 = tkinter.StringVar()
-        self.header1.set('Temperature in ')
-        tkinter.Label(self.frame, textvar=self.header1).pack()
-        self.header2 = tkinter.StringVar()
-        self.header2.set('Temperature in ')
+        self.header1 = f'Temperature in {self.converter.from_}:'
+        tkinter.Label(self.frame, text=self.header1).pack()
 
         # Input
         self.temp1 = tkinter.StringVar()
         tkinter.Entry(self.frame, width=30, textvar=self.temp1).pack()
 
-        tkinter.Label(self.frame, textvar=self.header2).pack()
+        self.header2 = f'Temperature in {self.converter.into}:'
+        tkinter.Label(self.frame, text=self.header2).pack()
+
         # Output
         self.temp2 = tkinter.StringVar()
         tkinter.Label(self.frame, textvar=self.temp2).pack()
@@ -28,122 +47,57 @@ class Converter:
         tkinter.Button(self.frame, text='Quit', width=10,
                        command=self.quit).pack()
 
-    def converter(self):
-        """Convert temperature from one scale (stored in self.temp1) to
-        the other and store the result in self.temp2.
-        """
-        pass
-
     def convert(self):
-        """Handle the case when the user gave no input."""
+        """Display the result of conversion."""
         try:
-            self.converter()
-        except ValueError:
-            self.temp2.set('ENTER YOUR TEMPERATURE')
+            self.temp2.set(self.converter.formula(float(self.temp1.get())))
+        except ValueError:  # the user has given no or incorrect input
+            self.temp2.set('ENTER CORRECT TEMPERATURE')
 
     def quit(self):
-        """Clear and hide the parent frame."""
-        for widget in self.master.winfo_children():
-            widget.destroy()
-        self.master.pack_forget()
-
-class CelsiusToFahrenheit(Converter):
-    """A Converter from Celsius to Fahrenheit."""
-    def __init__(self,  master):
-        super().__init__(master)
-        self.header1.set(self.header1.get() + 'Celsius:')
-        self.header2.set(self.header2.get() + 'Fahrenheit:')
-
-    def converter(self):
-        self.temp2.set(float(self.temp1.get()) * 9/5 + 32)
-
-
-class CelsiusToKelvin(Converter):
-    """A converter from Celsius to Kelvin."""
-    def __init__(self, master):
-        super().__init__(master)
-        self.header1.set(self.header1.get() + 'Celsius:')
-        self.header2.set(self.header2.get() + 'Kelvin:')
-
-    def converter(self):
-        self.temp2.set(float(self.temp1.get()) + 273.15)
-
-
-class FahrenheitToCelsius(Converter):
-    """A Converter from Fahrenheit to Celsius."""
-    def __init__(self, master):
-        super().__init__(master)
-        self.header1.set(self.header1.get() + 'Fahrenheit:')
-        self.header2.set(self.header2.get() + 'Celsius:')
-
-    def converter(self):
-        self.temp2.set((float(self.temp1.get()) - 32) * 5/9)
-
-
-class FahrenheitToKelvin(Converter):
-    """A Converter from Fahrenheit to Kelvin."""
-    def __init__(self, master):
-        super().__init__(master)
-        self.header1.set(self.header1.get() + 'Fahrenheit:')
-        self.header2.set(self.header2.get() + 'Kelvin:')
-
-    def converter(self):
-        self.temp2.set((float(self.temp1.get()) + 459.67) * 5/9)
-
-
-class KelvinToCelsius(Converter):
-    """A converter from Kelvin to Celsius."""
-    def __init__(self, master):
-        super().__init__(master)
-        self.header1.set(self.header1.get() + 'Kelvin:')
-        self.header2.set(self.header2.get() + 'Celsius:')
-
-    def converter(self):
-        self.temp2.set(float(self.temp1.get()) - 273.15)
-
-class KelvinToFahrenheit(Converter):
-    """A converter from Kelvin to Fahrenheit."""
-    def __init__(self, master):
-        super().__init__(master)
-        self.header1.set(self.header1.get() + 'Kelvin:')
-        self.header2.set(self.header2.get() + 'Fahrenheit:')
-
-    def converter(self):
-        self.temp2.set(float(self.temp1.get()) * 9/5 - 459.67)
+        """Clear and hide or destroy the master"""
+        try:
+            for widget in self.master.winfo_children():
+                widget.destroy()
+            self.master.pack_forget()
+        except AttributeError:  # the master has no attribute pack_forget
+            self.master.destroy()
 
 
 class AppFrame:
-    """The main application frame."""
+    """The main frame for the converting application"""
     def __init__(self, master):
         self.master = master
-        self.frame1 = tkinter.Frame(self.master, borderwidth=10)
+        self.frame1 = tkinter.Frame(master, borderwidth=10)
         self.frame1.pack()
-        self.frame2 = tkinter.Frame(self.master)
+        self.frame2 = tkinter.Frame(master, borderwidth=10)
 
-        self.converters = {
-            'Celsius To Fahrenheit': CelsiusToFahrenheit,
-            'Celsius To Kelvin': CelsiusToKelvin,
-            'Fahrenheit To Celsius': FahrenheitToCelsius,
-            'Fahrenheit To Kelvin': FahrenheitToKelvin,
-            'Kelvin To Celsius': KelvinToCelsius,
-            'Kelvin To Fahrenheit': KelvinToFahrenheit,
+        self.converters_data = {
+            ('Celsius', 'Fahrenheit'): lambda t: t*9/5 + 32,
+            ('Celsius', 'Kelvin'): lambda t: t + 273.15,
+            ('Fahrenheit', 'Celsius'): lambda t: (t-32) * 5/9,
+            ('Fahrenheit', 'Kelvin'): lambda t: (t+459.67) * 5/9,
+            ('Kelvin', 'Celsius'): lambda t: t - 273.15,
+            ('Kelvin', 'Fahrenheit'): lambda t: t*9/5 - 459.67,
         }
-        # Arrange buttons in alphabetical order
-        sorted_names = sorted(self.converters.keys())
+        sorted_names = sorted(self.converters_data.keys())
         for i in range(len(sorted_names)):
-            tkinter.Button(
-                self.frame1, text=sorted_names[i], width=20,
-                command=lambda c=self.converters[sorted_names[i]]:
-                    self.run(c)).grid(row=i//2, column=i%2)
+            names_pair = sorted_names[i]
+            converter = Converter(*names_pair, self.converters_data[names_pair])
+            tkinter.Button(self.frame1, width=20,
+                           text=converter.from_ + ' to ' + converter.into,
+                           command=lambda c=converter:
+                                self.run(c)).grid(row=i//2, column=i%2)
 
     def run(self, converter):
-        # If user has switched converters without closing the frame, clear it
-        for widget in self.frame2.winfo_children():
-            widget.destroy()
-
-        if not self.frame2.winfo_ismapped():  # the frame isn't packed
+        # If no converter has been run yet or the user quit a previous converter
+        if not self.frame2.winfo_ismapped():
             self.frame2.pack()
-        converter(self.frame2)
+        else:
+            # If the user switched converters without quitting
+            for widget in self.frame2.winfo_children():
+                widget.destroy()
+        ConverterGUI(self.frame2, converter)
 
 
 if __name__ == '__main__':
