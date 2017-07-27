@@ -18,6 +18,7 @@ class Converter:
         """
         return self.formula(temperature)
 
+
 class ConverterGUI:
     """GUI for Converter."""
     def __init__(self, master, converter):
