@@ -13,11 +13,10 @@ class Converter:
 
     def convert(self, temperature):
         """
-        (Converter, float) -> float
+        (Converter, number) -> float
         Convert temperature degrees.
         """
         return self.formula(temperature)
-
 
 class ConverterGUI:
     """GUI for Converter."""
@@ -50,7 +49,7 @@ class ConverterGUI:
     def convert(self):
         """Display the result of conversion."""
         try:
-            self.temp2.set(self.converter.formula(float(self.temp1.get())))
+            self.temp2.set(self.converter.convert(float(self.temp1.get())))
         except ValueError:  # the user has given no or incorrect input
             self.temp2.set('ENTER CORRECT TEMPERATURE')
 
@@ -65,7 +64,7 @@ class ConverterGUI:
 
 
 class AppFrame:
-    """The main frame for the converting application"""
+    """The main frame for the converting application."""
     def __init__(self, master):
         self.master = master
         self.frame1 = tkinter.Frame(master, borderwidth=10)
