@@ -7,7 +7,7 @@ class Converter:
     """
     def __init__(self, master, from_, to, formula):
         """
-        :param master: tkinter parent widget
+        :param master: parent tkinter widget
         :param from_: str
         :param to: str
         :param formula: function
@@ -47,9 +47,9 @@ class Converter:
     def get_result(self):
         """Store result of conversion."""
         try:
-            degrees = float(self.temperature1.get())
-            self.temperature2.set(self.formula(degrees))
-        except ValueError:  # User hasn't passed valid input
+            degrees_to_convert = float(self.temperature1.get())
+            self.temperature2.set(self.formula(degrees_to_convert))
+        except ValueError:  # User hasn't passed any valid input
             self.temperature2.set('ENTER VALID TEMPERATURE')
 
     def reset(self):
@@ -61,6 +61,7 @@ class Converter:
 class Application:
     """Application with GUI offering multiple converters."""
     def __init__(self, master):
+        """Create Application with parent tkinter widget master."""
         self.master = master
         self.converters_data = [
             ('Celsius', 'Fahrenheit', lambda t: t * 9 / 5 + 32),
@@ -113,8 +114,8 @@ class Application:
             widget.destroy()  # Clear
         self.converter_frame.pack_forget()  # Hide
 
-
-window = tkinter.Tk()
-app = Application(window)
-app.run_app()
-window.mainloop()
+if __name__ == '__main__':
+    window = tkinter.Tk()
+    app = Application(window)
+    app.run_app()
+    window.mainloop()
